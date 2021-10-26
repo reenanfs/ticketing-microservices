@@ -1,8 +1,7 @@
 import express, {Request, Response} from 'express';
 import {body} from 'express-validator';
 import jwt from 'jsonwebtoken';
-import { validateRequest } from '@reenanfs-ticketing/common';
-import { BadRequestError } from '@reenanfs-ticketing/common';
+import { validateRequest, BadRequestError } from '@reenanfs-ticketing/common';
 import { User } from '../models/user';
 
 const router = express.Router();
