@@ -3,9 +3,9 @@ import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 
 import {Password} from '../services/password';
-import { validateRequest } from '../middlewares/validate-request';
+import { validateRequest } from '@reenanfs-ticketing/common';
 import { User } from '../models/user';
-import { BadRequestError } from '../errors/bad-request-error';
+import { BadRequestError } from '@reenanfs-ticketing/common';
 
 const router = express.Router();
 
