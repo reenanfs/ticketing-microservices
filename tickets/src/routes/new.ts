@@ -36,7 +36,7 @@ router.post('/api/tickets',
             title: ticket.title,
             price: ticket.price,
             userId: ticket.userId
-        })
+        });
 
         res.status(201).send(ticket);
     });

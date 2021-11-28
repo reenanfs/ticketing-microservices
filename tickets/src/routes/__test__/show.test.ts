@@ -11,7 +11,7 @@ it('returns 404 if ticket is not found', async () => {
         .expect(404);
 });
 
-it('returns 200 the ticket if it is found', async () => {
+it('returns 200 if the ticket id found', async () => {
     const title = 'tickets';
     const price = 10;
 

@@ -1,7 +1,7 @@
 import request from 'supertest';
 import {app} from '../../app';
-import { Ticket } from '../../models/ticket';
 import mongoose from 'mongoose';
+import { natsWrapper } from '../../nats-wrapper'
 
 it('returns 404 if ticket is not found', async () => {
     const id = new mongoose.Types.ObjectId().toHexString();
@@ -107,3 +107,24 @@ it('updates the ticket provided valid inputs', async () => {
     expect(ticketResponse.body.price).toEqual(200);
 });
 
+it('publishes an event', async () => {
+    const cookie = global.signin();
+
+    const response = await request(app)
+        .post('/api/tickets')
+        .set('Cookie', cookie)
+        .send({
+            title: 'test',
+            price: 10
+    });
+
+    await request(app)
+        .put(`/api/tickets/${response.body.id}`)
+        .set('Cookie', cookie)
+        .send({
+            title: 'new test',
+            price: 200
+        })
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
