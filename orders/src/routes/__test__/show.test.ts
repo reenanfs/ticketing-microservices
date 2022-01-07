@@ -2,11 +2,13 @@ import request from 'supertest';
 import { app } from '../../app';
 import { Order, OrderStatus } from '../../models/order';
 import { Ticket } from '../../models/ticket';
+import mongoose from 'mongoose';
 
 it('fetches one ticket', async () => {
   const userOne = global.signin();
 
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 200,
   });
@@ -32,6 +34,7 @@ it('returns 401 if incorrect user makes the request', async () => {
   const userOne = global.signin();
 
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 200,
   });
