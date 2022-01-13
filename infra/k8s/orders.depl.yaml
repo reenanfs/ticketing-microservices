@@ -11,19 +11,19 @@ spec:
     metadata:
       labels:
         app: orders
-    spec: 
+    spec:
       containers:
         - name: orders
-          image: us.gcr.io/ticketing-dev-329402/orders
-          env: 
+          image: reenanfs/orders
+          env:
             - name: NATS_URL
               value: http://nats-srv:4222
             - name: NATS_CLUSTER_ID
               value: ticketing
             - name: NATS_CLIENT_ID
               valueFrom:
-                fieldRef: 
-                  fieldPath: metadata.name 
+                fieldRef:
+                  fieldPath: metadata.name
             - name: MONGO_URI
               value: 'mongodb://orders-mongo-srv:27017/orders'
             - name: JWT_KEY
@@ -34,7 +34,7 @@ spec:
 ---
 apiVersion: v1
 kind: Service
-metadata: 
+metadata:
   name: orders-srv
 spec:
   selector:
