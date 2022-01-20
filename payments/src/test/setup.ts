@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { app } from '../app';
 
 declare global {
-  var signin: () => string[];
+  var signin: (id?: string) => string[];
 }
 
 jest.mock('../nats-wrapper');

@@ -2,7 +2,7 @@ import { OrderCancelledEvent } from '@reenanfs-ticketing/common';
 import { Ticket } from '../../../models/ticket';
 import { natsWrapper } from '../../../nats-wrapper';
 import mongoose from 'mongoose';
-import { OrderCancelledListener } from '../order-cancelled-ticket';
+import { OrderCancelledListener } from '../order-cancelled-listener';
 
 const testSetup = async () => {
   const listener = new OrderCancelledListener(natsWrapper.client);

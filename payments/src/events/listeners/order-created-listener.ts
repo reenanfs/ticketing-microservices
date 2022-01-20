@@ -21,7 +21,6 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
       userId: data.userId,
       version: data.version,
     });
-
     await order.save();
     msg.ack();
   }

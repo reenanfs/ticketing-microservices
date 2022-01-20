@@ -11,6 +11,9 @@ import { natsWrapper } from '../nats-wrapper';
 import { NotFoundError } from '@reenanfs-ticketing/common/build';
 import { NotAuthorizedError } from '@reenanfs-ticketing/common/build';
 import { BadRequestError } from '@reenanfs-ticketing/common/build';
+import { stripe } from '../stripe';
+import { Payment } from '../models/payments';
+import { PaymentCreatedPublisher } from '../events/publishers/payment-created-publisher';
 
 const router = express.Router();
 
@@ -39,7 +42,26 @@ router.post(
       throw new BadRequestError('Cannot pay for an cancelled order.');
     }
 
-    res.status(20).send({ success: true });
+    const charge = await stripe.charges.create({
+      currency: 'brl',
+      amount: order.price * 100,
+      source: token,
+    });
+
+    const payment = Payment.build({
+      orderId,
+      stripeId: charge.id,
+    });
+
+    await payment.save();
+
+    await new PaymentCreatedPublisher(natsWrapper.client).publish({
+      id: payment.id,
+      orderId: payment.orderId,
+      stripeId: payment.stripeId,
+    });
+
+    res.status(201).send({ id: payment.id });
   }
 );
 
