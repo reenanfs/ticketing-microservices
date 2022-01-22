@@ -21,8 +21,8 @@ router.post(
   '/api/payments',
   requireAuth,
   [
-    body('token').not().isEmpty().withMessage('Title is required'),
-    body('orderId').not().isEmpty().withMessage('Title is required'),
+    body('token').not().isEmpty().withMessage('token is required'),
+    body('orderId').not().isEmpty().withMessage('orderId is required'),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
@@ -42,26 +42,32 @@ router.post(
       throw new BadRequestError('Cannot pay for an cancelled order.');
     }
 
-    const charge = await stripe.charges.create({
-      currency: 'brl',
-      amount: order.price * 100,
-      source: token,
-    });
+    try {
+      const charge = await stripe.charges.create({
+        currency: 'brl',
+        amount: order.price * 100,
+        source: token,
+      });
 
-    const payment = Payment.build({
-      orderId,
-      stripeId: charge.id,
-    });
+      console.log('charge', charge);
 
-    await payment.save();
+      const payment = Payment.build({
+        orderId,
+        stripeId: charge.id,
+      });
 
-    await new PaymentCreatedPublisher(natsWrapper.client).publish({
-      id: payment.id,
-      orderId: payment.orderId,
-      stripeId: payment.stripeId,
-    });
+      await payment.save();
 
-    res.status(201).send({ id: payment.id });
+      await new PaymentCreatedPublisher(natsWrapper.client).publish({
+        id: payment.id,
+        orderId: payment.orderId,
+        stripeId: payment.stripeId,
+      });
+
+      res.status(201).send({ id: payment.id });
+    } catch (err) {
+      console.log(err);
+    }
   }
 );
 
