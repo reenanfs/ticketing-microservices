@@ -11,14 +11,22 @@ spec:
     metadata:
       labels:
         app: auth
-    spec: 
+    spec:
       containers:
         - name: auth
-          image: us.gcr.io/ticketing-dev-329402/auth
+          image: reenanfs/auth
+          env:
+            - name: MONGO_URI
+              value: 'mongodb://auth-mongo-srv:27017/auth'
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service
-metadata: 
+metadata:
   name: auth-srv
 spec:
   selector:
